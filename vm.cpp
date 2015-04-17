@@ -15,8 +15,7 @@ using boost::adaptors::filtered;
 using boost::range::for_each;
 
 auto
-read_warrior_name_prog(char const* path)
-{
+read_warrior_name_prog(char const* path) {
   char const* prog = file_helpers::read_file(path);
   int magic_number = read_helpers::read<int>(prog);
   if (magic_number != COREWAR_EXEC_MAGIC) {
@@ -44,8 +43,7 @@ VM::addWarrior(char *filename) {
 }
 
 void
-VM::run()
-{
+VM::run() {
   checkDone();
 
   for (;;) {
@@ -63,39 +61,33 @@ VM::run()
 }
 
 std::vector<Warrior>&
-VM::getWarriors()
-{
+VM::getWarriors() {
   return _warriors;
 }
 
 auto
-VM::getAliveWarriors()
-{
+VM::getAliveWarriors() {
   //return _warriors | filtered([](auto const& w){ return w.isAlive(); });
   return _warriors | filtered(std::mem_fn(&Warrior::isAlive));
 }
 
 bool
-VM::isDone() const
-{
+VM::isDone() const {
   return countAlive() < 2;
 }
 
 long
-VM::countAlive() const
-{
+VM::countAlive() const {
   return boost::size(_warriors | filtered([](auto const& w){ return w.isAlive(); }));
 }
 
 uint
-VM::getMaxCycles() const
-{
+VM::getMaxCycles() const {
   return CYCLE_TO_DIE + CYCLE_DELTA * _delta;
 }
 
 opcode_map const&
-VM::getOpcodes() const
-{
+VM::getOpcodes() const {
   return _opcodes;
 }
 
@@ -104,9 +96,11 @@ VM::checkDone() {
   switch (countAlive()) {
     case 0:
       printf("Aww, everyone died!\n");
+      throw VMInterruptException();
 
     case 1:
       printf("%s wins!\n", getAliveWarriors().front().getName().c_str());
+      throw VMInterruptException();
   }
 }
 

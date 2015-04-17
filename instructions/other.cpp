@@ -3,11 +3,13 @@
 
 void instr_live(VM &vm, Warrior &warrior) {
   int warrior_id = warrior.readMemory<int>();
-  auto opt_war = first_where(vm.getWarriors(),
+  auto war = first_where(vm.getWarriors(),
                      [warrior_id](auto& w) { return w.getId() == warrior_id; });
-  for (auto& war : opt_war) { // go through optional
+  if (war) {
     printf("%s will live!\n", war->getName().c_str());
     war->didCallLive();
+  } else {
+    printf("Random live called, but no warrior with given ID...\n");
   }
 }
 /*
