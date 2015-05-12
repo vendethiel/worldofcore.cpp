@@ -3,6 +3,10 @@
 #include <boost/optional.hpp>
 #include <boost/range/adaptors.hpp>
 
+// allows to debug the type of some expression
+// (as it gets messy due to auto and al)
+#define DEBUG_TYPE(expr) struct {}_ = expr;
+
 typedef unsigned int uint;
 typedef unsigned long ulong;
 
