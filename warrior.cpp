@@ -1,6 +1,23 @@
 #include "warrior.hpp"
 
-void Warrior::tryToSurvive() {
+void
+Warrior::doWait() {
+  assert(_waiting > 0);
+  _waiting--;
+}
+
+bool
+Warrior::isWaiting() {
+  return _waiting > 0;
+}
+
+void
+Warrior::didCallLive() {
+  _called_live = true;
+}
+
+void
+Warrior::tryToSurvive() {
   if (_called_live) {
     _called_live = false;
   } else {
@@ -8,7 +25,8 @@ void Warrior::tryToSurvive() {
   }
 }
 
-void Warrior::play() {
+void
+Warrior::play() {
   if (_next_instr != -1) {
     // get an iterator
     auto op_it = _parent_vm->getOpcodes().find(readMemory<char>());

@@ -67,7 +67,6 @@ VM::getWarriors() {
 
 auto
 VM::getAliveWarriors() {
-  //return _warriors | filtered([](auto const& w){ return w.isAlive(); });
   return _warriors | filtered(std::mem_fn(&Warrior::isAlive));
 }
 
@@ -78,7 +77,8 @@ VM::isDone() const {
 
 long
 VM::countAlive() const {
-  return boost::size(_warriors | filtered([](auto const& w){ return w.isAlive(); }));
+  return boost::size(_warriors
+         | filtered([](auto const& w){ return w.isAlive(); }));
 }
 
 uint

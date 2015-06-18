@@ -22,11 +22,11 @@ public:
   std::string getName() const { return _name; }
   int getId() const { return _id; }
   bool isAlive() const { return _alive; }
-  bool isWaiting() const { return _waiting > 0; }
-  void doWait() { assert(_waiting > 0); _waiting--; };
+  bool isWaiting() const;
+  void doWait();
 
   void play();
-  void didCallLive() { _called_live = true; }
+  void didCallLive();
   void tryToSurvive();
 
   template<typename T>

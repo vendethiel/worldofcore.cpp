@@ -28,13 +28,6 @@ public:
   void addWarrior(char* filename);
   void run();
 
-  template<typename T>
-  T
-  readMemory(uint offset) {
-    return read_helpers::read<T>(_memory.begin() + offset);
-  }
-
-
   std::vector<Warrior>& getWarriors();
   auto getAliveWarriors();
 
@@ -42,6 +35,12 @@ public:
   long countAlive() const;
   uint getMaxCycles() const;
   opcode_map const& getOpcodes() const;
+
+  template<typename T>
+  T
+  readMemory(uint offset) {
+    return read_helpers::read<T>(_memory.begin() + offset);
+  }
 
 private:
   void checkDone();
