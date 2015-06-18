@@ -34,10 +34,12 @@ public:
   readMemory() {
     T val = _parent_vm->readMemory<T>(_pc);
     _pc += sizeof(T);
+    _pc %= MEM_SIZE;
     return val;
   }
 
 private:
+  // TODO useOp to set _next_instr / _waiting?
   void fetchNewOp();
 
   VM* _parent_vm;

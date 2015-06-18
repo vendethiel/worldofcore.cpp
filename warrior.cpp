@@ -43,7 +43,8 @@ Warrior::play() {
 }
 
 void Warrior::fetchNewOp() {
-  op_t* op = nullptr; //FIXME find_op(_parent_vm->readMemory<char>(_pc));
+  op_t* op = _parent_vm->fetchOp(this);
+ // find_op(_parent_vm->readMemory<char>(_pc));
   if (op) {
     _next_instr = _pc;
     _waiting = static_cast<uint>(op->nbr_cycles); // nbr_cycles is int? wtf?

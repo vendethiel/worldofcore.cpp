@@ -114,15 +114,16 @@ VM::runLifeCycle() {
   }
 }
 
-/*
-void fetch_op(vm_t * vm, warrior_t * warrior) {
-  op_t *op = find_op(vm->memory[warrior->pc]);
+op_t*
+// TODO should this really be in VM? (reasoning: VM has the opcode map)
+// TODO should this call the (NYI) "Warrior::useOp" method?
+VM::fetchOp(Warrior& warrior) {
+  //op_t *op = find_op(vm->memory[warrior->pc]);
+  char op = warrior.readMemory<char>();
   if (op) {
-    warrior->next_instr = warrior->pc;
-    warrior->waiting = op->nbr_cycles;
-  } / * else, just wait it out * /
-  warrior->pc %= MEM_SIZE; / * so circular... * /
+    //warrior->next_instr = warrior->pc;
+    //warrior->waiting = op->nbr_cycles;
+  } // else, just wait it out
+
+  return nullptr; // TODO
 }
-
-
-*/
