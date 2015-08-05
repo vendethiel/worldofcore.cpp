@@ -7,7 +7,7 @@ Warrior::doWait() {
 }
 
 bool
-Warrior::isWaiting() {
+Warrior::isWaiting() const {
   return _waiting > 0;
 }
 

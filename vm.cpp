@@ -39,7 +39,7 @@ VM::addWarrior(char *filename) {
 	uint id = _last_id++;
   _warriors.emplace_back(this, id, name, size, prog);
 	uint offset = _last_id * (MEM_SIZE / _num_warriors);
-	offset++; // TODO memcpy prog to
+	offset++; // TODO memcpy prog to the memory (just avoid unused var warning)
 }
 
 void
@@ -117,9 +117,9 @@ VM::runLifeCycle() {
 op_t*
 // TODO should this really be in VM? (reasoning: VM has the opcode map)
 // TODO should this call the (NYI) "Warrior::useOp" method?
-VM::fetchOp(Warrior& warrior) {
+VM::fetchOp(Warrior* warrior) {
   //op_t *op = find_op(vm->memory[warrior->pc]);
-  char op = warrior.readMemory<char>();
+  char op = warrior->readMemory<char>();
   if (op) {
     //warrior->next_instr = warrior->pc;
     //warrior->waiting = op->nbr_cycles;

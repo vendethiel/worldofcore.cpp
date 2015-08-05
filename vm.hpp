@@ -27,7 +27,7 @@ public:
 
   void addWarrior(char* filename);
   void run();
-  op_t* fetchOp(Warrior& warrior);
+  op_t* fetchOp(Warrior* warrior);
 
   std::vector<Warrior>& getWarriors();
   auto getAliveWarriors();
