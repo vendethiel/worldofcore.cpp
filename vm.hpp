@@ -3,7 +3,7 @@
 #include <vector>
 #include <unordered_map>
 class VM;
-#include "warrior.hpp"
+class Warrior;
 #include "op.hpp"
 #include "utility.hpp"
 #include "read_helpers.hpp"
