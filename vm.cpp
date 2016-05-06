@@ -126,6 +126,3 @@ VM::fetchOp(Warrior* warrior) {
 
   return nullptr; // TODO
 }
-
-
-lol mdr;
