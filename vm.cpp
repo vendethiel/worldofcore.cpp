@@ -77,8 +77,7 @@ VM::isDone() const {
 
 long
 VM::countAlive() const {
-  return boost::size(_warriors
-         | filtered([](auto const& w){ return w.isAlive(); }));
+  return boost::size(_warriors | filtered(std::mem_fn(&Warrior::isAlive)));
 }
 
 uint
@@ -127,3 +126,6 @@ VM::fetchOp(Warrior* warrior) {
 
   return nullptr; // TODO
 }
+
+
+lol mdr;
