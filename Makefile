@@ -1,20 +1,17 @@
-CXX  = /usr/local/opt/llvm/bin/clang++
-
 SRC = $(wildcard *.cpp) $(wildcard */*.cpp)
 
 OBJ = $(SRC:.cpp=.o)
 
 CXXFLAGS = -std=c++1z -stdlib=libc++ \
- -W -Wall -Werror
+ -W -Wall -Werror \
+ -I/opt/homebrew/Cellar/boost/1.83.0/include
 
 NAME = corepp
 
 all: $(NAME)
 
-LIBS = -I/usr/local/Cellar/boost/1.57.0/include
-
 $(NAME): $(OBJ)
-	$(CXX) -o $(NAME) $(OBJ) $(LIBS) $(CXXFLAGS)
+	$(CXX) -o $(NAME) $(OBJ) $(CXXFLAGS)
 
 clean:
 	rm -f $(OBJ)
