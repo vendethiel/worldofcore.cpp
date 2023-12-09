@@ -1,5 +1,4 @@
 #include <boost/range.hpp>
-#include "instr_header.hpp"
 
 void instr_live(VM &vm, Warrior &warrior) {
   int warrior_id = warrior.readMemory<int>();

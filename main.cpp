@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include "warrior.hpp"
 #include "vm.hpp"
-#include "instructions/instr_header.hpp"
+#include "instructions/other.cpp"
 
 int main(int argc, char** argv)
 {
