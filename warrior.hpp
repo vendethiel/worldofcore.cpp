@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <assert.h>
+#include <cassert>
 #include "op.hpp"
 class Warrior;
 
@@ -9,20 +9,13 @@ class Warrior;
 
 class Warrior : NonCopyable {
 public:
-  Warrior(VM* vm, uint id, std::string name, off_t prog_size, char const* prog)
-      : _parent_vm{vm},
-        _id{id},
-        _name{std::move(name)},
-        _prog_size{prog_size},
-        _prog{prog}
-  {
-    _regs[0] = id;
-  }
+  Warrior(VM* vm, uint id, std::string name, off_t prog_size, char const* prog);
+  Warrior(Warrior&& that) noexcept;
 
-  std::string getName() const { return _name; }
-  int getId() const { return _id; }
-  bool isAlive() const { return _alive; }
-  bool isWaiting() const;
+  [[nodiscard]] std::string getName() const;
+  [[nodiscard]] uint getId() const;
+  [[nodiscard]] bool isAlive() const;
+  [[nodiscard]] bool isWaiting() const;
   void doWait();
 
   void play();
@@ -58,13 +51,5 @@ private:
   bool _called_live = false;
 
   //short _carry = 0;
-  int _regs[REG_NUMBER];
-
-public:
-  Warrior(Warrior&& that)
-      : _parent_vm{that._parent_vm}, _id{that._id}, _name{std::move(that._name)},
-        _prog_size{that._prog_size}, _prog{that._prog}
-  {
-    _regs[0] = that._id;
-  };
+  [[maybe_unused]] int _regs[REG_NUMBER];
 };

@@ -3,7 +3,7 @@ SRC = $(wildcard *.cpp) $(wildcard */*.cpp)
 OBJ = $(SRC:.cpp=.o)
 
 CXXFLAGS = -std=c++1z -stdlib=libc++ \
- -W -Wall -Werror \
+ -W -Wall -Wextra -Werror \
  -I/opt/homebrew/Cellar/boost/1.83.0/include
 
 NAME = corepp

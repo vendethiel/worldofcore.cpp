@@ -1,9 +1,10 @@
-#include <boost/range.hpp>
+#include "../vm.hpp"
+#include "../warrior.hpp"
 
 void instr_live(VM &vm, Warrior &warrior) {
-  int warrior_id = warrior.readMemory<int>();
+  uint warrior_id = warrior.readMemory<uint>();
   auto war = first_where(vm.getWarriors(),
-                     [warrior_id](auto& w) { return w.getId() == warrior_id; });
+                         [warrior_id](auto &w) { return w.getId() == warrior_id; });
   if (war) {
     printf("%s will live!\n", war->getName().c_str());
     war->didCallLive();

@@ -13,29 +13,19 @@ typedef std::unordered_map<char, vm_op> opcode_map;
 
 class VM {
 public:
-  VM(ulong num_warriors, opcode_map opcodes)
-        /* NOTE: do NOT pass num_warriors to vector constructor,
-         * as it'd allocate these elements
-         * instead of setting the max size... (duh)
-         */
-      : _opcodes{std::move(opcodes)},
-        _warriors{std::vector<Warrior>()},
-        _num_warriors{num_warriors}
-  {
-		_warriors.reserve(num_warriors);
-	}
+  VM(ulong num_warriors, opcode_map opcodes);
 
   void addWarrior(char* filename);
+
   void run();
   op_t* fetchOp(Warrior* warrior);
 
   std::vector<Warrior>& getWarriors();
   auto getAliveWarriors();
 
-  bool isDone() const;
-  long countAlive() const;
-  uint getMaxCycles() const;
-  opcode_map const& getOpcodes() const;
+  [[nodiscard]] unsigned long countAlive() const;
+  [[nodiscard]] uint getMaxCycles() const;
+  [[nodiscard]] opcode_map const& getOpcodes() const;
 
   template<typename T>
   T
@@ -44,7 +34,7 @@ public:
   }
 
 private:
-  void checkDone();
+  bool checkDone();
   void runLifeCycle();
 
   opcode_map _opcodes;

@@ -1,9 +1,6 @@
-#include <memory>
-#include <vector>
-#include <unordered_map>
 #include "warrior.hpp"
 #include "vm.hpp"
-#include "instructions/other.cpp"
+#include "instructions/live.hpp"
 
 int main(int argc, char** argv)
 {

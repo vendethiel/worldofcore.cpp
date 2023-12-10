@@ -1,7 +1,6 @@
-#include <assert.h>
+#include <cassert>
 #include <tuple>
 #include <algorithm>
-#include <string>
 #include <boost/range/adaptors.hpp>
 #include <boost/range/algorithm.hpp>
 #include "file_helpers.hpp"
@@ -9,22 +8,34 @@
 #include "warrior.hpp"
 #include "read_helpers.hpp"
 
-#define PROGRAM_OFFSET PROG_NAME_LENGTH + 1 /* \0 (magic added before) */
+#define PROGRAM_OFFSET (PROG_NAME_LENGTH + 1) /* \0 (magic added before) */
 
 using boost::adaptors::filtered;
 using boost::range::for_each;
 
 auto
-read_warrior_name_prog(char const* path) {
-  char const* prog = file_helpers::read_file(path);
+read_warrior_name_prog(char const *path) {
+  char *prog = file_helpers::read_file(path);
   int magic_number = read_helpers::read<int>(prog);
   if (magic_number != COREWAR_EXEC_MAGIC) {
     printf("%s is not a valid coretna champion (invalid magic number %d)\n", path, magic_number);
     throw VMInterruptException();
   }
-  prog += sizeof(int);
+  *prog += sizeof(int);
 
-  return std::make_tuple(std::string(prog), prog + PROGRAM_OFFSET);
+  return std::make_tuple(prog, prog + PROGRAM_OFFSET);
+}
+
+
+/* NOTE: do NOT pass num_warriors to vector constructor,
+ * as it'd allocate these elements
+ * instead of setting the max size... (duh)
+ */
+VM::VM(ulong num_warriors, opcode_map opcodes) : _opcodes{std::move(opcodes)},
+                                                 _warriors{std::vector<Warrior>()},
+                                                 _num_warriors{num_warriors},
+                                                 _memory{} {
+  _warriors.reserve(num_warriors);
 }
 
 void
@@ -32,14 +43,14 @@ VM::addWarrior(char *filename) {
   auto size = static_cast<int>(file_helpers::get_file_size(filename)) - PROGRAM_OFFSET;
   assert(size > 0);
 
-  std::string name;
-  char const* prog;
+  char *name;
+  char const *prog;
   std::tie(name, prog) = read_warrior_name_prog(filename);
 
-	uint id = _last_id++;
+  uint id = _last_id++;
   _warriors.emplace_back(this, id, name, size, prog);
-	uint offset = _last_id * (MEM_SIZE / _num_warriors);
-	offset++; // TODO memcpy prog to the memory (just avoid unused var warning)
+  uint offset = _last_id * (MEM_SIZE / _num_warriors);
+  offset++; // TODO memcpy prog to the memory (just avoid unused var warning)
 }
 
 void
@@ -47,7 +58,7 @@ VM::run() {
   checkDone();
 
   for (;;) {
-    for (auto& warrior : _warriors) {
+    for (auto &warrior: _warriors) {
       if (warrior.isWaiting()) {
         warrior.doWait();
       } else {
@@ -56,11 +67,12 @@ VM::run() {
     }
     runLifeCycle();
 
-    checkDone();
+    if (checkDone())
+      return;
   }
 }
 
-std::vector<Warrior>&
+std::vector<Warrior> &
 VM::getWarriors() {
   return _warriors;
 }
@@ -70,12 +82,7 @@ VM::getAliveWarriors() {
   return _warriors | filtered(std::mem_fn(&Warrior::isAlive));
 }
 
-bool
-VM::isDone() const {
-  return countAlive() < 2;
-}
-
-long
+unsigned long
 VM::countAlive() const {
   return boost::size(_warriors | filtered(std::mem_fn(&Warrior::isAlive)));
 }
@@ -85,22 +92,23 @@ VM::getMaxCycles() const {
   return CYCLE_TO_DIE + CYCLE_DELTA * _delta;
 }
 
-opcode_map const&
+opcode_map const &
 VM::getOpcodes() const {
   return _opcodes;
 }
 
-void
+bool
 VM::checkDone() {
   switch (countAlive()) {
     case 0:
       printf("Aww, everyone died!\n");
-      throw VMInterruptException();
+      return true;
 
     case 1:
       printf("%s wins!\n", getAliveWarriors().front().getName().c_str());
-      throw VMInterruptException();
+      return true;
   }
+  return false;
 }
 
 void
@@ -109,14 +117,15 @@ VM::runLifeCycle() {
     _cycle = 0;
     _delta++;
 
-    for_each(_warriors, [](auto& w) { w.tryToSurvive(); });
+    for_each(_warriors, [](auto &w) { w.tryToSurvive(); });
   }
 }
 
-op_t*
+op_t *
 // TODO should this really be in VM? (reasoning: VM has the opcode map)
 // TODO should this call the (NYI) "Warrior::useOp" method?
-VM::fetchOp(Warrior* warrior) {
+// XXX Warrior uses VM->getOpcodes()->find, doesn't make sense
+VM::fetchOp(Warrior *warrior) {
   //op_t *op = find_op(vm->memory[warrior->pc]);
   char op = warrior->readMemory<char>();
   if (op) {
