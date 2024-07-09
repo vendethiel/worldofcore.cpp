@@ -5,6 +5,7 @@
 class VM;
 class Warrior;
 #include "op.hpp"
+#include "instruction.hpp"
 #include "utility.hpp"
 #include "read_helpers.hpp"
 

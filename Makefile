@@ -10,8 +10,11 @@ NAME = corepp
 
 all: $(NAME)
 
+%.o: %.cpp
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
+
 $(NAME): $(OBJ)
-	$(CXX) -o $(NAME) $(OBJ) $(CXXFLAGS)
+	$(CXX) -o $@ $^ $(CXXFLAGS)
 
 clean:
 	rm -f $(OBJ)
