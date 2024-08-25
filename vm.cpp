@@ -5,6 +5,7 @@
 #include <boost/range/algorithm.hpp>
 #include "file_helpers.hpp"
 #include "op.hpp"
+#include "vm.hpp"
 #include "warrior.hpp"
 #include "read_helpers.hpp"
 
@@ -92,11 +93,6 @@ VM::getMaxCycles() const {
   return CYCLE_TO_DIE + CYCLE_DELTA * _delta;
 }
 
-opcode_map const &
-VM::getOpcodes() const {
-  return _opcodes;
-}
-
 bool
 VM::checkDone() {
   switch (countAlive()) {
@@ -125,13 +121,13 @@ op_t *
 // TODO should this really be in VM? (reasoning: VM has the opcode map)
 // TODO should this call the (NYI) "Warrior::useOp" method?
 // XXX Warrior uses VM->getOpcodes()->find, doesn't make sense
-VM::fetchOp(Warrior *warrior) {
-  //op_t *op = find_op(vm->memory[warrior->pc]);
-  char op = warrior->readMemory<char>();
-  if (op) {
-    //warrior->next_instr = warrior->pc;
-    //warrior->waiting = op->nbr_cycles;
-  } // else, just wait it out
+VM::fetchOp(Warrior& warrior) {
+//  uint pc = warrior->getPc();
+//  readMemory<int>(pc);
+//    T val = _parent_vm->readMemory<T>(_pc);
+//    pc += sizeof(T);
+//    pc %= MEM_SIZE;
+//    return val;
 
   return nullptr; // TODO
 }

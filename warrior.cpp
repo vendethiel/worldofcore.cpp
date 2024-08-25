@@ -29,11 +29,6 @@ Warrior::isWaiting() const {
   return _waiting > 0;
 }
 
-void
-Warrior::didCallLive() {
-  _called_live = true;
-}
-
 std::string
 Warrior::getName() const {
   return _name;
@@ -58,32 +53,14 @@ Warrior::tryToSurvive() {
   }
 }
 
-void
-Warrior::play() {
-  if (_next_instr != -1) {
-    // get an iterator
-    // TODO ->getOpcode(readMemory()), don't provide getOpcodes()
-    auto op_it = _parent_vm->getOpcodes().find(readMemory<char>());
-    if (op_it != _parent_vm->getOpcodes().end()) {
-      auto op = std::get<vm_op>(*op_it); // deref iterator
-      op(*_parent_vm, *this);
-    }
-  }
-  _pc %= MEM_SIZE;
-  if (_next_instr == -1) {
-    // was not set by another instruction
-    fetchNewOp();
-  }
+uint Warrior::getPc() const {
+  return _pc;
 }
 
-void Warrior::fetchNewOp() {
-  op_t *op = _parent_vm->fetchOp(this);
-  // find_op(_parent_vm->readMemory<char>(_pc));
-  if (op) {
-    _next_instr = static_cast<int>(_pc);
-    _waiting = static_cast<uint>(op->nbr_cycles); // nbr_cycles is int? wtf?
-  } else {
-    _pc++; /* skip that one, cya later ... */
-  }
-  _pc %= MEM_SIZE;
+void Warrior::setPc(uint pc) {
+  _pc = pc;
+}
+
+void Warrior::live() {
+  _called_live = true;
 }

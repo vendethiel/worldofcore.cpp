@@ -1,10 +1,6 @@
 #pragma once
 #include <string>
 #include <cassert>
-#include "op.hpp"
-class Warrior;
-
-#include "vm.hpp"
 #include "utility.hpp"
 
 class Warrior : NonCopyable {
@@ -18,23 +14,12 @@ public:
   [[nodiscard]] bool isWaiting() const;
   void doWait();
 
-  void play();
-  void didCallLive();
+  void live();
+  uint getPc() const;
+  void setPc(uint);
   void tryToSurvive();
 
-  template<typename T>
-  T
-  readMemory() {
-    T val = _parent_vm->readMemory<T>(_pc);
-    _pc += sizeof(T);
-    _pc %= MEM_SIZE;
-    return val;
-  }
-
 private:
-  // TODO useOp to set _next_instr / _waiting?
-  void fetchNewOp();
-
   VM* _parent_vm;
 
   uint _id;

@@ -1,39 +1,57 @@
 #pragma once
 
 #include <tuple>
-#include "vm.hpp"
 #include "warrior.hpp"
-
+#include "read_helpers.hpp"
 
 namespace Instruction {
   struct VM_INT {
-    using type = int;
   };
 
   namespace _impl {
     template<typename T>
     struct ArgFor {
+      using type = int;
     };
 
     template<>
     struct ArgFor<VM_INT> {
-      using type = int;
+      int parse(char* memory, uint& pc, int flag, int& nth) {
+        nth++;
+
+        pc += 2;
+      }
     };
 
     template<typename... T>
-    using ArgsFor = std::tuple<typename ArgFor<T>::type...>;
+    using ArgsFor = std::tuple<typename ArgFor<T>::type...> const &;
   }
 
   template<typename... T>
   struct Base {
-    virtual void process(_impl::ArgsFor<T...> const &) = 0;
+    bool runIn(char *memory, Warrior &warrior);
 
     ~Base() = default;
+
+  protected:
+    virtual void process(_impl::ArgsFor<T...>, Warrior &) const = 0;
   };
 
-  struct Live : Base<VM_INT> {
-    void process(std::tuple<int> const &) override {
+  template<typename... T>
+  bool Base<T...>::runIn(char *memory, Warrior &warrior) {
+    uint pc = warrior.getPc();
+    int flag = read_helpers::read<int>(memory + pc);
+    pc += sizeof(int);
+    int nth = 0;
+    process(std::tuple{
+      _impl::ArgFor<T>::parse(memory, pc, flag, nth)...
+    }, memory, warrior);
+  }
 
+  struct Live : Base<> {
+  protected:
+    void process(std::tuple<> const &, Warrior &warrior) const override {
+      warrior.live();
     }
   };
 }
