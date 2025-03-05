@@ -51,7 +51,7 @@ VM::addWarrior(char *filename) {
 
 void
 VM::run() {
-    checkDone();
+    if (checkDone()) return;
 
     for (;;) {
         for (auto &warrior: _warriors) {
