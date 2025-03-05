@@ -116,9 +116,10 @@ namespace instruction {
     }
   }
 
-  void live(VM&, Warrior& warrior) {
+  int live(VM&, Warrior& warrior) {
     // TODO do we need to read flags?
     //[[maybe_unused]] auto _ = detail::parse<>();
     warrior.live();
+    return 0;
   }
 }

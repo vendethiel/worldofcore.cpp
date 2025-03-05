@@ -20,7 +20,7 @@ public:
   void doWait();
 
   void live();
-  [[nodiscard]] uint getPc() const;
+  [[nodiscard]] int getPc() const;
   void setPc(uint);
   void tryToSurvive();
 
@@ -32,7 +32,7 @@ private:
   char const* _prog;
 
   int _next_instr = -1;
-  uint _pc = 0;               /* that's really just a pointer */
+  int _pc = 0;               /* that's really just a pointer */
   uint _waiting = 0; /* number of times before executing PC */
 
   bool _alive = true;

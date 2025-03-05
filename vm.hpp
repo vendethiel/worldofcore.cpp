@@ -8,7 +8,7 @@ class Warrior;
 
 class VM {
 public:
-  using OpcodeMap = std::unordered_map<long, void(*)(VM&, Warrior&)>;
+  using OpcodeMap = std::unordered_map<long, int(*)(VM&, Warrior&)>;
   VM(long num_warriors, OpcodeMap&& map);
 
   void addWarrior(char* filename);
@@ -28,6 +28,7 @@ public:
   }
 
 private:
+  void play(Warrior&);
   bool checkDone() const;
   void runLifeCycle();
 

@@ -58,7 +58,7 @@ VM::run() {
             if (warrior.isWaiting()) {
                 warrior.doWait();
             } else {
-                // warrior.play();
+                play(warrior);
             }
         }
         runLifeCycle();
@@ -66,6 +66,18 @@ VM::run() {
         if (checkDone())
             return;
     }
+}
+
+void
+VM::play(Warrior& warrior) {
+  int pc = warrior.getPc();
+  int opcode = readMemory<int>(pc);
+  pc += sizeof(int);
+
+  auto fn = _opcodes.at(opcode);
+  pc += fn(*this, warrior);
+
+  warrior.setPc(pc);
 }
 
 std::vector<Warrior> const&

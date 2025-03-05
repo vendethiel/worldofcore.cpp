@@ -57,7 +57,7 @@ Warrior::tryToSurvive() {
   }
 }
 
-uint
+int
 Warrior::getPc() const {
   return _pc;
 }
