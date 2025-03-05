@@ -1,12 +1,16 @@
 #pragma once
 #include <string>
-#include <cassert>
-#include "utility.hpp"
+#include <sys/types.h>
 
-class Warrior : NonCopyable {
+#include "op.hpp"
+
+class Warrior {
 public:
-  Warrior(VM* vm, uint id, std::string name, off_t prog_size, char const* prog);
+  Warrior(uint id, std::string name, off_t prog_size, char const* prog);
   Warrior(Warrior&& that) noexcept;
+
+  Warrior(Warrior const&) = delete;
+  Warrior& operator=(Warrior const&) = delete;
 
   [[nodiscard]] std::string getName() const;
   [[nodiscard]] uint getId() const;
@@ -15,13 +19,11 @@ public:
   void doWait();
 
   void live();
-  uint getPc() const;
+  [[nodiscard]] uint getPc() const;
   void setPc(uint);
   void tryToSurvive();
 
 private:
-  VM* _parent_vm;
-
   uint _id;
   std::string _name;
 
@@ -35,6 +37,5 @@ private:
   bool _alive = true;
   bool _called_live = false;
 
-  //short _carry = 0;
   [[maybe_unused]] int _regs[REG_NUMBER];
 };

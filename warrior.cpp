@@ -1,8 +1,8 @@
+#include <cassert>
 #include "warrior.hpp"
 
-Warrior::Warrior(VM *vm, uint id, std::string name, off_t prog_size, char const *prog)
-        : _parent_vm{vm},
-          _id{id},
+Warrior::Warrior(uint id, std::string name, off_t prog_size, char const *prog)
+        : _id{id},
           _name{std::move(name)},
           _prog_size{prog_size},
           _prog{prog},
@@ -10,8 +10,7 @@ Warrior::Warrior(VM *vm, uint id, std::string name, off_t prog_size, char const 
 }
 
 Warrior::Warrior(Warrior &&that) noexcept
-        : _parent_vm{that._parent_vm},
-          _id{that._id},
+        : _id{that._id},
           _name{std::move(that._name)},
           _prog_size{that._prog_size},
           _prog{that._prog},
