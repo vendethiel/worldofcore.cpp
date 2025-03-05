@@ -28,7 +28,7 @@ public:
   }
 
 private:
-  bool checkDone();
+  bool checkDone() const;
   void runLifeCycle();
 
   OpcodeMap _opcodes;

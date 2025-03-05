@@ -41,9 +41,7 @@ VM::addWarrior(char *filename) {
     auto size = static_cast<int>(file_helpers::get_file_size(filename)) - PROGRAM_OFFSET;
     assert(size > 0);
 
-    char *name;
-    char const *prog;
-    std::tie(name, prog) = read_warrior_name_prog(filename);
+    const auto [name, prog] = read_warrior_name_prog(filename);
 
     int id = _last_id++;
     _warriors.emplace_back(id, name, size, prog);
@@ -91,7 +89,7 @@ VM::getMaxCycles() const {
 }
 
 bool
-VM::checkDone() {
+VM::checkDone() const {
     switch (countAlive()) {
         case 0:
             printf("Aww, everyone died!\n");
