@@ -12,7 +12,8 @@ public:
   Warrior(Warrior const&) = delete;
   Warrior& operator=(Warrior const&) = delete;
 
-  [[nodiscard]] std::string getName() const;
+  [[nodiscard]] std::string getName() const &&;
+  [[nodiscard]] std::string const& getName() const &;
   [[nodiscard]] uint getId() const;
   [[nodiscard]] bool isAlive() const;
   [[nodiscard]] bool isWaiting() const;

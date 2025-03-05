@@ -28,8 +28,13 @@ Warrior::isWaiting() const {
   return _waiting > 0;
 }
 
+std::string const &
+Warrior::getName() const &{
+  return _name;
+}
+
 std::string
-Warrior::getName() const {
+Warrior::getName() const && {
   return _name;
 }
 
@@ -52,14 +57,17 @@ Warrior::tryToSurvive() {
   }
 }
 
-uint Warrior::getPc() const {
+uint
+Warrior::getPc() const {
   return _pc;
 }
 
-void Warrior::setPc(uint pc) {
+void
+Warrior::setPc(uint pc) {
   _pc = pc;
 }
 
-void Warrior::live() {
+void
+Warrior::live() {
   _called_live = true;
 }
