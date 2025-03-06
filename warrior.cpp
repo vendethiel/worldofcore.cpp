@@ -71,3 +71,17 @@ void
 Warrior::live() {
   _called_live = true;
 }
+
+int&
+Warrior::reg(int idx) & {
+  assert(idx >= 0);
+  assert(idx < REG_NUMBER);
+  return _regs[idx];
+}
+
+int const&
+Warrior::reg(int idx) const & {
+  assert(idx >= 0);
+  assert(idx < REG_NUMBER);
+  return _regs[idx];
+}

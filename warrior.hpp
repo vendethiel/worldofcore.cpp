@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <array>
 #include <sys/types.h>
 
 #include "op.hpp"
@@ -18,6 +19,9 @@ public:
   [[nodiscard]] bool isAlive() const;
   [[nodiscard]] bool isWaiting() const;
   void doWait();
+
+  int& reg(int idx) &;
+  int const& reg(int idx) const &;
 
   void live();
   [[nodiscard]] int getPc() const;
@@ -38,5 +42,5 @@ private:
   bool _alive = true;
   bool _called_live = false;
 
-  [[maybe_unused]] int _regs[REG_NUMBER];
+  std::array<int, REG_NUMBER> _regs;
 };
