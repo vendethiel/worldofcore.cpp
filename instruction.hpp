@@ -64,9 +64,9 @@ namespace instruction {
 
       using Tst = std::tuple<Ts...>;
       return [&vm, &warrior, flags, pc]<std::size_t... I>(std::index_sequence<I...>) {
-        return std::tuple<as<I, int>...>(
-          std::tuple_element<I, Tst>::type::accept(flags[I], vm.readMemory<int>(pc + (I * 2)), warrior)...
-        );
+        return std::tuple{
+          std::tuple_element_t<I, Tst>::accept(flags[I], vm.readMemory<int>(pc + (I * 2)), warrior)...
+        };
       }(std::make_index_sequence<sizeof...(Ts)>{});
     }
   }
