@@ -73,11 +73,10 @@ VM::play(Warrior& warrior) {
   int pc = warrior.getPc();
   int opcode = readMemory<int>(pc);
   pc += sizeof(int);
+  warrior.setPc(pc);
 
   auto fn = _opcodes.at(opcode);
-  pc += fn(*this, warrior);
-
-  warrior.setPc(pc);
+  fn(*this, warrior);
 }
 
 std::vector<Warrior> const&

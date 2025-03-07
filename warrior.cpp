@@ -29,13 +29,13 @@ Warrior::isWaiting() const {
 }
 
 std::string const &
-Warrior::getName() const &{
+Warrior::getName() const & {
   return _name;
 }
 
-std::string
-Warrior::getName() const && {
-  return _name;
+std::string &&
+Warrior::getName() && {
+  return std::move(_name);
 }
 
 uint
