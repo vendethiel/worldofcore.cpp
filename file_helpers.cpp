@@ -1,5 +1,6 @@
 #include <string>
 #include <fstream>
+#include <cstring>
 #include "file_helpers.hpp"
 
 std::ifstream::pos_type

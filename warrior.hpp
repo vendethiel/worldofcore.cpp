@@ -1,27 +1,34 @@
 #pragma once
 #include <string>
-#include <cassert>
-#include "utility.hpp"
+#include <array>
+#include <sys/types.h>
 
-class Warrior : NonCopyable {
+#include "op.hpp"
+
+class Warrior {
 public:
-  Warrior(VM* vm, uint id, std::string name, off_t prog_size, char const* prog);
+  Warrior(uint id, std::string name, off_t prog_size, char const* prog);
   Warrior(Warrior&& that) noexcept;
 
-  [[nodiscard]] std::string getName() const;
+  Warrior(Warrior const&) = delete;
+  Warrior& operator=(Warrior const&) = delete;
+
+  [[nodiscard]] std::string&& getName() &&;
+  [[nodiscard]] std::string const& getName() const &;
   [[nodiscard]] uint getId() const;
   [[nodiscard]] bool isAlive() const;
   [[nodiscard]] bool isWaiting() const;
   void doWait();
 
+  int& reg(int idx) &;
+  int const& reg(int idx) const &;
+
   void live();
-  uint getPc() const;
+  [[nodiscard]] int getPc() const;
   void setPc(uint);
   void tryToSurvive();
 
 private:
-  VM* _parent_vm;
-
   uint _id;
   std::string _name;
 
@@ -29,12 +36,11 @@ private:
   char const* _prog;
 
   int _next_instr = -1;
-  uint _pc = 0;               /* that's really just a pointer */
+  int _pc = 0;               /* that's really just a pointer */
   uint _waiting = 0; /* number of times before executing PC */
 
   bool _alive = true;
   bool _called_live = false;
 
-  //short _carry = 0;
-  [[maybe_unused]] int _regs[REG_NUMBER];
+  std::array<int, REG_NUMBER> _regs;
 };

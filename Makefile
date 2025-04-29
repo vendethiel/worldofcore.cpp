@@ -1,10 +1,10 @@
+CXX ?= g++
+
 SRC = $(wildcard *.cpp) $(wildcard */*.cpp)
 
 OBJ = $(SRC:.cpp=.o)
 
-CXXFLAGS = -std=c++1z -stdlib=libc++ \
- -W -Wall -Wextra -Werror \
- -I/opt/homebrew/Cellar/boost/1.85.0/include
+CXXFLAGS = -std=c++20 -W -Wall -Wextra -Werror
 
 NAME = corepp
 

@@ -2,71 +2,97 @@
 
 #include <tuple>
 #include "warrior.hpp"
+#include "vm.hpp"
 #include "read_helpers.hpp"
 
-namespace Instruction {
-  struct VM_INT {
-  };
-
-  namespace _impl {
-    template<typename T>
-    struct ArgFor {
-      using type = int;
+namespace instruction {
+  namespace detail {
+    struct Register {
+      static constexpr int flag = 0x1;
+      static int accept(int given, int raw, Warrior const& warrior) {
+        if (given == flag)
+          return warrior.reg(raw);
+        return -1;
+      }
     };
-
-    template<>
-    struct ArgFor<VM_INT> {
-      int parse(char* memory, uint& pc, int flag, int& nth) {
-        nth++;
-
-        pc += 2;
+    struct Value {
+      static constexpr int flag = 0x2;
+      static int accept(int given, int raw, Warrior const&) {
+        if (given == flag)
+          return raw;
+        return -1;
       }
     };
 
-    template<typename... T>
-    using ArgsFor = std::tuple<typename ArgFor<T>::type...> const &;
-  }
+    template<typename... Ts>
+    struct Either;
 
-  template<typename... T>
-  struct Base {
-    bool runIn(char *memory, Warrior &warrior);
+    template<typename T, typename... Ts>
+    struct Either<T, Ts...> {
+      static int accept(int flag, int raw, Warrior const& warrior) {
+        int ret = T::accept(flag, raw, warrior);
+        return ret == -1 ? Either<Ts...>::accept(flag, raw, warrior) : ret;
+      }
+    };
 
-    ~Base() = default;
+    template<>
+    struct Either<> {
+      static int accept(int, int, Warrior const&) {
+        return -1; // TODO signal error? skip warrior's turn?
+      }
+    };
 
-  protected:
-    virtual void process(_impl::ArgsFor<T...>, Warrior &) const = 0;
-  };
+    using Any = Either<Register, Value>;
 
-  template<typename... T>
-  bool Base<T...>::runIn(char *memory, Warrior &warrior) {
-    uint pc = warrior.getPc();
-    int flag = read_helpers::read<int>(memory + pc);
-    pc += sizeof(int);
-    int nth = 0;
-    process(std::tuple{
-      _impl::ArgFor<T>::parse(memory, pc, flag, nth)...
-    }, memory, warrior);
-  }
+//    template<typename T>
+//    int callParse(int flags, int raw, Warrior const& warrior) {
+//      return return T::parse(flags, raw
+//    }
 
-  struct Live : Base<> {
-  protected:
-    void process(std::tuple<> const &, Warrior &warrior) const override {
-      warrior.live();
+    template<auto T, typename R>
+    using As = R;
+
+    template<typename... Ts>
+    requires (sizeof...(Ts) <= 3)
+    [[nodiscard]]
+    auto parse(VM& vm, Warrior& warrior) {
+      int pc = warrior.getPc();
+      int flagsValue = vm.readMemory<int>(pc);
+      pc += 2;
+      warrior.setPc(pc + (1 + sizeof...(Ts))); // increment it, but keep pc here for expansion
+      std::array<int, 3> flags = { flagsValue & 0x11, flagsValue & 0x1100, flagsValue & 0x110000 };
+
+      using Tst = std::tuple<Ts...>;
+      return [&vm, &warrior, flags, pc]<std::size_t... I>(std::index_sequence<I...>) {
+        return std::tuple{
+          std::tuple_element_t<I, Tst>::accept(flags[I], vm.readMemory<int>(pc + (I * 2)), warrior)...
+        };
+      }(std::make_index_sequence<sizeof...(Ts)>{});
     }
-  };
+  }
+
+
+  void live(VM&, Warrior& warrior) {
+    // TODO do we need to read flags?
+    //[[maybe_unused]] auto _ = detail::parse<>();
+    warrior.live();
+  }
+
+  void ld(VM& vm, Warrior& warrior) {
+    using namespace detail;
+    const auto [reg, reg2] = detail::parse<detail::Register, detail::Register>(vm, warrior);
+    warrior.reg(reg) = warrior.reg(reg2);
+  }
+
+  void st(VM& vm, Warrior& warrior) {
+    const auto [reg, value] = detail::parse<detail::Register, detail::Any>(vm, warrior);
+    warrior.reg(reg) = value;
+  }
 }
 /*
-typedef struct {
-  char op;
-  void (*fn)(vm_t* vm, warrior_t* warrior);
-} instr_t;*/
-/*
-extern instr_t instructions[];
-instr_t* find_instr(char);
-char get_arg_type(int, char);
-void instr_live(vm_t* vm, warrior_t* warrior);
-void instr_ld(vm_t* vm, warrior_t* warrior);
-void instr_st(vm_t* vm, warrior_t* warrior);
+  void instr_live(vm_t* vm, warrior_t* warrior);
+  void instr_ld(vm_t* vm, warrior_t* warrior);
+  void instr_st(vm_t* vm, warrior_t* warrior);
 void instr_add(vm_t* vm, warrior_t* warrior);
 void instr_sub(vm_t* vm, warrior_t* warrior);
 void instr_and(vm_t* vm, warrior_t* warrior);
